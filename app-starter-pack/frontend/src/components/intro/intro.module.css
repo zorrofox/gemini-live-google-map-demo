@@ -1,0 +1,93 @@
+.container {
+  position: absolute;
+  top: var(--header-height);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  background-color: var(--Google-Type-Grey-900);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 750ms ease-in-out;
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+}
+
+.aiVoiceInIntro {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140vh;
+  height: 140vh;
+}
+
+.introText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  margin: 0;
+  font-size: 60px;
+  line-height: 72px;
+  font-weight: normal;
+  text-align: center;
+  color: var(--primary-text-color);
+  display: flex;
+  flex-direction: column;
+  letter-spacing: -0.5px;
+}
+
+.connected {
+  pointer-events: none;
+}
+
+.logo {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+}
+
+.cta {
+  pointer-events: all;
+  width: fit-content;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+
+  button {
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    gap: 8px;
+    padding: 15px 30px;
+    background: var(--Google-Light-Blue-300);
+    border-radius: 100px;
+    font-size: 20px;
+  }
+}
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+div.introChat {
+  position: relative;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  pointer-events: all;
+  border: 1px solid var(--Google-Type-Grey-800);
+}

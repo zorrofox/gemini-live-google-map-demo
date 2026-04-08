@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音频测试页面 - 仅语音对话</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Google Sans', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .status.disconnected {
+            background: rgba(255, 59, 48, 0.3);
+        }
+        
+        .status.connected {
+            background: rgba(52, 199, 89, 0.3);
+        }
+        
+        .status.talking {
+            background: rgba(255, 204, 0, 0.3);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .logs {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+        
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid rgba(255, 255, 255, 0.3);
+            padding-left: 10px;
+        }
+        
+        .info-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 音频测试页面</h1>
+        <div class="subtitle">纯语音对话 - 无UI显示</div>
+        
+        <div id="status" class="status disconnected">
+            ⚪ 未连接
+        </div>
+        
+        <button id="connectBtn" onclick="connect()">开始连接</button>
+        
+        <div class="info-box">
+            <strong>💡 使用说明：</strong><br>
+            1. 点击"开始连接"建立连接<br>
+            2. 允许麦克风权限<br>
+            3. 直接说话即可（自动检测）<br>
+            4. AI 会自动语音回复（Aoede 女声）<br>
+            5. 同时打开观察者模式页面查看UI效果
+        </div>
+        
+        <div class="logs" id="logs">
+            <div class="log-entry">等待连接...</div>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        let audioContext = null;
+        let mediaStream = null;
+        let audioWorklet = null;
+        let isRecording = false;
+        
+        const SERVICE_URL = 'wss://restaurant-guide-service-224077212497.us-central1.run.app/ws';
+        const statusDiv = document.getElementById('status');
+        const logsDiv = document.getElementById('logs');
+        const connectBtn = document.getElementById('connectBtn');
+        
+        function log(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const timestamp = new Date().toLocaleTimeString('zh-CN');
+            entry.textContent = `[${timestamp}] ${message}`;
+            logsDiv.appendChild(entry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+            console.log(message);
+        }
+        
+        function updateStatus(text, className) {
+            statusDiv.textContent = text;
+            statusDiv.className = 'status ' + className;
+        }
+        
+        async function connect() {
+            try {
+                connectBtn.disabled = true;
+                log('🔌 正在连接到服务器...');
+                updateStatus('🔄 连接中...', 'disconnected');
+                
+                // 建立 WebSocket 连接（使用 glasses 模式，这样才能触发工具调用）
+                ws = new WebSocket(`${SERVICE_URL}?client_type=glasses&voice_name=Aoede`);
+                
+                ws.onopen = async () => {
+                    log('✅ WebSocket 连接成功');
+                    updateStatus('🟢 已连接 - 准备中...', 'connected');
+                    
+                    // 发送 setup 消息
+                    const setupMsg = {
+                        setup: {
+                            run_id: generateUUID(),
+                            user_id: 'test_user_' + Date.now()
+                        }
+                    };
+                    ws.send(JSON.stringify(setupMsg));
+                    log('📤 已发送 setup 消息');
+                };
+                
+                ws.onmessage = async (event) => {
+                    try {
+                        // 处理 Blob (二进制消息)
+                        if (event.data instanceof Blob) {
+                            const text = await event.data.text();
+                            const data = JSON.parse(text);
+                            
+                            // setupComplete
+                            if (data.setupComplete) {
+                                log('✅ Setup 完成，可以开始说话了！');
+                                updateStatus('🎤 准备就绪 - 请说话', 'connected');
+                                await startAudio();
+                                return;
+                            }
+                            
+                            // 处理 AI 的音频回复
+                            if (data.serverContent?.modelTurn?.parts) {
+                                for (const part of data.serverContent.modelTurn.parts) {
+                                    if (part.inlineData?.data) {
+                                        log('🔊 收到 AI 音频回复，正在播放...');
+                                        updateStatus('🔊 AI 正在说话...', 'talking');
+                                        await playAudio(part.inlineData.data);
+                                        updateStatus('🎤 准备就绪 - 请说话', 'connected');
+                                    }
+                                }
+                            }
+                            
+                            // 记录输出转录
+                            if (data.serverContent?.outputTranscription?.text) {
+                                log(`💬 AI: ${data.serverContent.outputTranscription.text}`);
+                            }
+                            
+                            // 工具调用
+                            if (data.toolCall) {
+                                log(`🔧 触发工具调用: ${data.toolCall.functionCalls?.[0]?.name || '未知'}`);
+                            }
+                        } 
+                        // 处理字符串消息
+                        else if (typeof event.data === 'string') {
+                            const data = JSON.parse(event.data);
+                            
+                            // groundingResponse (餐厅数据)
+                            if (data.groundingResponse) {
+                                log('🗺️  收到餐厅数据（已广播给观察者）');
+                                const restaurants = data.groundingResponse.grounding_metadata?.restaurant_suggestions;
+                                if (restaurants?.length > 0) {
+                                    log(`   找到 ${restaurants.length} 家餐厅`);
+                                }
+                            }
+                            
+                            // 状态消息
+                            if (data.status) {
+                                log(`ℹ️  ${data.status}`);
+                            }
+                        }
+                    } catch (err) {
+                        console.error('消息处理错误:', err);
+                    }
+                };
+                
+                ws.onerror = (error) => {
+                    log('❌ WebSocket 错误: ' + error);
+                    updateStatus('❌ 连接错误', 'disconnected');
+                    connectBtn.disabled = false;
+                };
+                
+                ws.onclose = () => {
+                    log('🔌 连接已断开');
+                    updateStatus('⚪ 未连接', 'disconnected');
+                    connectBtn.disabled = false;
+                    stopAudio();
+                };
+                
+            } catch (error) {
+                log('❌ 连接失败: ' + error.message);
+                updateStatus('❌ 连接失败', 'disconnected');
+                connectBtn.disabled = false;
+            }
+        }
+        
+        async function startAudio() {
+            try {
+                log('🎙️  请求麦克风权限...');
+                mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        channelCount: 1,
+                        sampleRate: 16000,
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                    } 
+                });
+                
+                audioContext = new AudioContext({ sampleRate: 16000 });
+                const source = audioContext.createMediaStreamSource(mediaStream);
+                
+                // 使用 ScriptProcessorNode (兼容 file:// 协议)
+                const bufferSize = 4096;
+                audioWorklet = audioContext.createScriptProcessor(bufferSize, 1, 1);
+                
+                audioWorklet.onaudioprocess = (event) => {
+                    const inputData = event.inputBuffer.getChannelData(0);
+                    const pcm16 = new Int16Array(inputData.length);
+                    
+                    for (let i = 0; i < inputData.length; i++) {
+                        const s = Math.max(-1, Math.min(1, inputData[i]));
+                        pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+                    }
+                    
+                    const base64Audio = arrayBufferToBase64(pcm16.buffer);
+                    
+                    if (ws && ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({
+                            realtimeInput: {
+                                mediaChunks: [{
+                                    mimeType: 'audio/pcm',
+                                    data: base64Audio
+                                }]
+                            }
+                        }));
+                    }
+                };
+                
+                source.connect(audioWorklet);
+                audioWorklet.connect(audioContext.destination);
+                
+                log('✅ 麦克风已启动，可以说话了！');
+                
+            } catch (error) {
+                log('❌ 麦克风启动失败: ' + error.message);
+            }
+        }
+        
+        function stopAudio() {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+            }
+            if (audioContext) {
+                audioContext.close();
+            }
+        }
+        
+        async function playAudio(base64Audio) {
+            try {
+                const audioData = base64ToArrayBuffer(base64Audio);
+                const audioCtx = new AudioContext({ sampleRate: 24000 });
+                
+                // 将 PCM 数据转换为 AudioBuffer
+                const audioBuffer = audioCtx.createBuffer(1, audioData.byteLength / 2, 24000);
+                const channelData = audioBuffer.getChannelData(0);
+                const view = new DataView(audioData);
+                
+                for (let i = 0; i < channelData.length; i++) {
+                    channelData[i] = view.getInt16(i * 2, true) / 32768.0;
+                }
+                
+                const source = audioCtx.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(audioCtx.destination);
+                source.start();
+                
+                await new Promise(resolve => {
+                    source.onended = resolve;
+                });
+                
+                audioCtx.close();
+            } catch (error) {
+                console.error('音频播放失败:', error);
+            }
+        }
+        
+        function arrayBufferToBase64(buffer) {
+            let binary = '';
+            const bytes = new Uint8Array(buffer);
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);
+        }
+        
+        function base64ToArrayBuffer(base64) {
+            const binaryString = atob(base64);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+        
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+    </script>
+</body>
+</html>

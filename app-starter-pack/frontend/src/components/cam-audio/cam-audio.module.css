@@ -1,0 +1,127 @@
+.camAudio {
+  display: flex;
+  flex-direction: row;
+  padding: 8px 8px 8px 8px;
+  height: 80px;
+  align-items: center;
+  gap: 4px;
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  border-radius: 100px;
+  background: var(--Google-Type-Grey-800, #3c4043);
+  z-index: 1000;
+
+  div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  svg {
+    color: white;
+    width: 32px;
+    height: 32px;
+    aspect-ratio: 1;
+  }
+}
+
+.videoContainer {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.videoIconWrapper {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.videoIconContent {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.videoIconContent:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.videoIcon {
+  color: #fff;
+  font-size: 32px;
+}
+
+.webcamContainer {
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  border-radius: 50%;
+  position: relative;
+}
+
+.webcamVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.5) scaleX(-1); /* Combines zoom and horizontal flip */
+  transform-origin: center center;
+}
+
+.hidden {
+  display: none;
+}
+
+.mic {
+  cursor: pointer;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  transition: all 0.2s ease-in-out;
+}
+
+.mic:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Audio visualizer */
+:global(.audio-bar) {
+  transition: height 0.1s ease-out;
+}
+
+/* Only apply animation when speaking */
+:global(.audio-bar.speaking) {
+  transition: height 0.05s ease-out;
+}
+
+/* Apply different animations only when speaking */
+:global(.speaking .audio-bar-left.speaking) {
+  animation: bounce 0.2s ease-in-out;
+}
+
+:global(.speaking .audio-bar-middle.speaking) {
+  animation: bounce 0.15s ease-in-out;
+}
+
+:global(.speaking .audio-bar-right.speaking) {
+  animation: bounce 0.25s ease-in-out;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.05);
+  }
+}
+
+/* Override animations when we have actual volume data */
+:global(.active-audio .audio-bar) {
+  animation: none;
+}

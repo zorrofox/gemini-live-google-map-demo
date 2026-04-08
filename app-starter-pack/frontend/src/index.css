@@ -1,0 +1,158 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+:root {
+  --Google-Type-Grey-900: #121212;
+  --Google-Type-Grey-800: #3c4043;
+  --Google-Type-Grey-700: #5f6368;
+  --Google-Type-Grey-200: #e8eaed;
+  --Google-Dark-Grey-600: #80868b;
+  --Google-Light-Grey-300: #dadce0;
+  --Google-Light-Grey-100: #f1f3f4;
+  --Google-Core-Grey-500: #9aa0a6;
+  --Google-Dark-Yellow-700: #f29900;
+  --Google-Light-Blue-300: #8ab4f8;
+  --Google-Light-Red-300: #f28b82;
+  --Google-Light-Green-300: #81c995;
+  --Google-Blue-900: #174ea6;
+  --primary-text-color: #fff;
+  --secondary-text-color: #80868b;
+  --header-height: 125px;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+.App {
+  height: 100dvh; /* 📏 动态视口高度，自动适应地址栏 */
+  height: 100vh; /* Fallback for older browsers */
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #121212;
+  position: relative;
+}
+
+@font-face {
+  font-family: 'Google Sans Regular';
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local('Google Sans Regular'),
+    url('/fonts/GoogleSans-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Google Sans Italic';
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local('Google Sans Italic'),
+    url('/fonts/GoogleSans-Italic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Google Sans Medium';
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local('Google Sans Medium'),
+    url('/fonts/GoogleSans-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Google Sans Medium Italic';
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local('Google Sans Medium Italic'),
+    url('/fonts/GoogleSans-MediumItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Google Sans Bold';
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local('Google Sans Bold'),
+    url('/fonts/GoogleSans-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Google Sans Bold Italic';
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local('Google Sans Bold Italic'),
+    url('/fonts/GoogleSans-BoldItalic.ttf') format('truetype');
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  position: fixed; /* 🔒 锁定位置，防止滚动 */
+  height: 100%;
+  width: 100%;
+  font-weight: normal;
+  font-style: normal;
+  font-family: 'Google Sans Regular', sans-serif;
+  overflow: hidden;
+  overscroll-behavior: none; /* 🚫 禁用橡皮筋效果 */
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y; /* 只允许地图平移 */
+  background-color: #121212;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  background-color: #121212;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+dialog:modal {
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+/* select divs which classes cointain api-load-alpha-banner  */
+div[class*='api-load-alpha-banner'] {
+  display: none;
+}
+
+.infowindow {
+  max-width: 250px;
+
+  .title {
+    font-size: 18px;
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--Google-Dark-Grey-600);
+  }
+
+  .star {
+    font-size: 16px;
+    color: var(--Google-Dark-Yellow-700);
+  }
+}

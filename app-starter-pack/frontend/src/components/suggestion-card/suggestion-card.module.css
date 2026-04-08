@@ -1,0 +1,40 @@
+.suggestionCard {
+  display: flex;
+  gap: 8px;
+  width: 430px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  border-radius: 24px;
+  background: var(--Google-Type-Grey-900);
+  flex: 1;
+  gap: 4px;
+}
+
+.arrow {
+  background: var(--Google-Light-Blue-300);
+  padding: 16px;
+  border-radius: 24px;
+  height: 56px;
+  width: 56px;
+}
+
+.title {
+  color: var(--primary-text-color);
+  font-size: 18px;
+  line-height: 28px;
+}
+
+.subtitle {
+  color: var(--secondary-text-color);
+  font-size: 16px;
+}
+
+.rating,
+.type {
+  color: var(--secondary-text-color);
+  font-size: 16px;
+}

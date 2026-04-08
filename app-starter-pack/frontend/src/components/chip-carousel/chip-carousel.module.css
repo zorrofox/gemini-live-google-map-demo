@@ -1,0 +1,51 @@
+.carouselContainer {
+  width: 420px;
+  overflow: hidden;
+  position: relative;
+}
+
+.carouselTrack {
+  display: flex;
+  align-items: center;
+}
+
+.chip {
+  width: 420px;
+  height: 56px;
+  margin: 0;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.chipContent {
+  padding: 12px 24px;
+  color: var(--Google-Type-Grey-200);
+  border: 2px solid var(--Google-Type-Grey-700);
+  border-radius: 8px;
+  font-size: 18px;
+  line-height: 28px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.25;
+}
+
+.active {
+  border: 2px solid var(--Google-Type-Grey-700, #5f6368);
+  opacity: 1;
+  transform: scale(1);
+}
+
+.dimmed {
+  opacity: 0.5;
+  transform: scale(0.95);
+}
+
+.hidden {
+  opacity: 0;
+  transform: scale(0.9);
+}

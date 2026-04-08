@@ -1,0 +1,24 @@
+.placeRatings {
+  display: flex;
+  align-items: center;
+  line-height: 10px;
+}
+
+.starsContainer {
+  display: flex;
+  align-items: center;
+}
+
+.starIcon {
+  color: var(--Google-Dark-Yellow-700);
+  font-size: 16px;
+}
+
+.starsText {
+  margin-right: 4px;
+}
+
+.infoboxReviews {
+  padding-left: 0.7em;
+  margin: 0;
+}

@@ -1,0 +1,53 @@
+.audio-vis {
+  --accent-color: rgba(52, 168, 83, 1);
+  --secondary-color: rgba(251, 188, 4, 1);
+  --light-bg-color: rgba(95, 99, 104, 1);
+  --dark-bg-color: rgba(60, 64, 67, 1);
+
+  pointer-events: none;
+
+  path {
+    fill: none;
+    vector-effect: non-scaling-stroke;
+  }
+
+  &.color-1 {
+    --accent-color: rgba(66, 133, 244, 1);
+    --secondary-color: rgba(52, 168, 83, 1);
+  }
+
+  &.color-2 {
+    --accent-color: rgba(251, 188, 4, 1);
+    --secondary-color: rgba(234, 67, 53, 1);
+  }
+
+  &.color-3 {
+    --accent-color: rgba(66, 133, 244, 1);
+    --secondary-color: rgba(251, 188, 4, 1);
+  }
+
+  &.color-4 {
+    --accent-color: rgba(66, 133, 244, 1);
+    --secondary-color: rgba(234, 67, 53, 1);
+  }
+}
+
+.path-0 {
+  stroke: var(--accent-color);
+  stroke-width: 4;
+}
+
+.path-1 {
+  stroke: var(--secondary-color);
+  stroke-width: 3;
+}
+
+.path-2 {
+  stroke: var(--dark-bg-color);
+  stroke-width: 2;
+}
+
+.path-3 {
+  stroke: var(--light-bg-color);
+  stroke-width: 1;
+}

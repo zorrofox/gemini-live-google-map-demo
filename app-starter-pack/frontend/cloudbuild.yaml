@@ -1,0 +1,8 @@
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/juyun-juyunlifang/restaurant-guide-frontend:latest', '.']
+
+images:
+  - 'gcr.io/juyun-juyunlifang/restaurant-guide-frontend:latest'
+

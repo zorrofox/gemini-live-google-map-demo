@@ -1,0 +1,256 @@
+steps:
+  # Stage 1: Build the base image with common dependencies
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-base'
+    args:
+      - 'build'
+      - '-t'
+      - '$_IMAGE_NAME-base' # Tag the base image
+      - '--target'
+      - 'base' # Build up to the 'base' stage
+      - '-f'
+      - 'app-starter-pack/Dockerfile'
+      - '.'
+
+  # Stage 2: Build and push images for each API key
+  
+  # ====== BUILD 0001 ======
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-0001'
+    args:
+      - 'build'
+      - '-t'
+      - '$_IMAGE_NAME-0001' # Tag the API key image
+      - '--target'
+      - 'itinerary_planner'
+      - '--build-arg'
+      - 'GOOGLE_API_KEY=$_GOOGLE_API_KEY_0001'
+      - '-f'
+      - 'app-starter-pack/Dockerfile'
+      - '.'
+  
+  # ====== PUSH 0001 ======
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-0001'
+    args:
+      - 'push'
+      - '$_IMAGE_NAME-0001'
+    waitFor: ['build-0001']
+
+  # ====== BUILD 0002 ======
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-0002'
+    args:
+      - 'build'
+      - '-t'
+      - '$_IMAGE_NAME-0002' # Tag the API key image
+      - '--target'
+      - 'itinerary_planner'
+      - '--build-arg'
+      - 'GOOGLE_API_KEY=$_GOOGLE_API_KEY_0002'
+      - '-f'
+      - 'app-starter-pack/Dockerfile'
+      - '.'
+  
+  # ====== PUSH 0002 ======
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-0002'
+    args:
+      - 'push'
+      - '$_IMAGE_NAME-0002'
+    waitFor: ['build-0002']
+
+  # ====== BUILD 0003 ======
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-0003'
+    args:
+      - 'build'
+      - '-t'
+      - '$_IMAGE_NAME-0003' # Tag the API key image
+      - '--target'
+      - 'itinerary_planner'
+      - '--build-arg'
+      - 'GOOGLE_API_KEY=$_GOOGLE_API_KEY_0003'
+      - '-f'
+      - 'app-starter-pack/Dockerfile'
+      - '.'
+
+  # ====== PUSH 0003 ======
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-0003'
+    args:
+      - 'push'
+      - '$_IMAGE_NAME-0003'
+    waitFor: ['build-0003']
+
+  # ====== BUILD 0004 ======
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-0004'
+    args:
+      - 'build'
+      - '-t'
+      - '$_IMAGE_NAME-0004' # Tag the API key image
+      - '--target'
+      - 'itinerary_planner'
+      - '--build-arg'
+      - 'GOOGLE_API_KEY=$_GOOGLE_API_KEY_0004'
+      - '-f'
+      - 'app-starter-pack/Dockerfile'
+      - '.'
+
+  # ====== PUSH 0004 ======
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-0004'
+    args:
+      - 'push'
+      - '$_IMAGE_NAME-0004'
+    waitFor: ['build-0004']
+
+# ====== BUILD 0005 ======
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-0005'
+    args:
+      - 'build'
+      - '-t'
+      - '$_IMAGE_NAME-0005' # Tag the API key image
+      - '--target'
+      - 'itinerary_planner'
+      - '--build-arg'
+      - 'GOOGLE_API_KEY=$_GOOGLE_API_KEY_0005'
+      - '-f'
+      - 'app-starter-pack/Dockerfile'
+      - '.'
+
+  # ====== PUSH 0005 ======
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-0005'
+    args:
+      - 'push'
+      - '$_IMAGE_NAME-0005'
+    waitFor: ['build-0005']
+
+  # Stage 3: Deploy images to Cloud Run
+
+  # ====== DEPLOY 0001 ======
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-0001'
+    entrypoint: gcloud
+    args:
+      [
+        'run',
+        'deploy',
+        'react-next25-demo-0001',
+        '--allow-unauthenticated',
+        '--project', 'itinerary-planner-0001',
+        '--image', '$_IMAGE_NAME-0001',
+        '--region', '$_REGION',
+        '--memory', '4Gi',
+        '--timeout', '1200',
+        '--min', '1',
+        '--set-env-vars', 'GOOGLE_API_KEY=$_GOOGLE_API_KEY_0001',
+        '--set-env-vars', 'PROJECT_NUMBER=$_PROJECT_NUMBER_0001',
+        '--set-env-vars', 'FIRESTORE_PROJECT=$_FIRESTORE_PROJECT',
+        '--set-env-vars', 'FIRESTORE_CLIENT_EMAIL=$_FIRESTORE_CLIENT_EMAIL',
+        '--set-env-vars', 'FIRESTORE_PRIVATE_KEY=$_FIRESTORE_PRIVATE_KEY',
+      ]
+
+  # ====== DEPLOY 0002 ======
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-0002'
+    entrypoint: gcloud
+    args:
+      [
+        'run',
+        'deploy',
+        'react-next25-demo-0002',
+        '--allow-unauthenticated',
+        '--project', 'itinerary-planner-0002',
+        '--image', '$_IMAGE_NAME-0002',
+        '--region', '$_REGION',
+        '--memory', '4Gi',
+        '--timeout', '1200',
+        '--min', '1',
+        '--set-env-vars', 'GOOGLE_API_KEY=$_GOOGLE_API_KEY_0002',
+        '--set-env-vars', 'PROJECT_NUMBER=$_PROJECT_NUMBER_0002',
+        '--set-env-vars', 'FIRESTORE_PROJECT=$_FIRESTORE_PROJECT',
+        '--set-env-vars', 'FIRESTORE_CLIENT_EMAIL=$_FIRESTORE_CLIENT_EMAIL',
+        '--set-env-vars', 'FIRESTORE_PRIVATE_KEY=$_FIRESTORE_PRIVATE_KEY',
+      ]
+
+  # ====== DEPLOY 0003 ======
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-0003'
+    entrypoint: gcloud
+    args:
+      [
+        'run',
+        'deploy',
+        'react-next25-demo-0003',
+        '--allow-unauthenticated',
+        '--project', 'itinerary-planner-0003',
+        '--image', '$_IMAGE_NAME-0003',
+        '--region', '$_REGION',
+        '--memory', '4Gi',
+        '--timeout', '1200',
+        '--min', '1',
+        '--set-env-vars', 'GOOGLE_API_KEY=$_GOOGLE_API_KEY_0003',
+        '--set-env-vars', 'PROJECT_NUMBER=$_PROJECT_NUMBER_0003',
+        '--set-env-vars', 'FIRESTORE_PROJECT=$_FIRESTORE_PROJECT',
+        '--set-env-vars', 'FIRESTORE_CLIENT_EMAIL=$_FIRESTORE_CLIENT_EMAIL',
+        '--set-env-vars', 'FIRESTORE_PRIVATE_KEY=$_FIRESTORE_PRIVATE_KEY',
+      ]
+
+  # ====== DEPLOY 0004 ======
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-0004'
+    entrypoint: gcloud
+    args:
+      [
+        'run',
+        'deploy',
+        'react-next25-demo-0004',
+        '--allow-unauthenticated',
+        '--project', 'itinerary-planner-0004',
+        '--image', '$_IMAGE_NAME-0004',
+        '--region', '$_REGION',
+        '--memory', '4Gi',
+        '--timeout', '1200',
+        '--min', '1',
+        '--set-env-vars', 'GOOGLE_API_KEY=$_GOOGLE_API_KEY_0004',
+        '--set-env-vars', 'PROJECT_NUMBER=$_PROJECT_NUMBER_0004',
+        '--set-env-vars', 'FIRESTORE_PROJECT=$_FIRESTORE_PROJECT',
+        '--set-env-vars', 'FIRESTORE_CLIENT_EMAIL=$_FIRESTORE_CLIENT_EMAIL',
+        '--set-env-vars', 'FIRESTORE_PRIVATE_KEY=$_FIRESTORE_PRIVATE_KEY',
+      ]
+
+  # ====== DEPLOY 0005 ======
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-0005'
+    entrypoint: gcloud
+    args:
+      [
+        'run',
+        'deploy',
+        'react-next25-demo-0005',
+        '--allow-unauthenticated',
+        '--project', 'itinerary-planner-0005',
+        '--image', '$_IMAGE_NAME-0005',
+        '--region', '$_REGION',
+        '--memory', '4Gi',
+        '--timeout', '1200',
+        '--min', '1',
+        '--set-env-vars', 'GOOGLE_API_KEY=$_GOOGLE_API_KEY_0005',
+        '--set-env-vars', 'PROJECT_NUMBER=$_PROJECT_NUMBER_0005',
+        '--set-env-vars', 'FIRESTORE_PROJECT=$_FIRESTORE_PROJECT',
+        '--set-env-vars', 'FIRESTORE_CLIENT_EMAIL=$_FIRESTORE_CLIENT_EMAIL',
+        '--set-env-vars', 'FIRESTORE_PRIVATE_KEY=$_FIRESTORE_PRIVATE_KEY',
+      ]
+
+images:
+  - '$_IMAGE_NAME-0001'
+  - '$_IMAGE_NAME-0002'
+  - '$_IMAGE_NAME-0003'
+  - '$_IMAGE_NAME-0004'
+  - '$_IMAGE_NAME-0005'
+options:
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET

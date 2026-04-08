@@ -1,0 +1,32 @@
+.menuButton {
+  display: flex;
+  position: absolute;
+  top: 10rem;
+  right: 4rem;
+  justify-content: center;
+  flex-direction: row;
+  gap: 8px;
+
+  padding: 12px 24px 12px 16px;
+
+  cursor: pointer;
+  border: none;
+  border-radius: 100px;
+  background: var(--Google-Light-Blue-300, #8ab4f8);
+
+  /* Google/Dropshadow-Elevation+03 */
+  box-shadow:
+    0px 4px 8px 3px rgba(60, 64, 67, 0.15),
+    0px 1px 2px 0px rgba(60, 64, 67, 0.3);
+
+  z-index: 20;
+
+  color: var(--Google-Type-Grey-900, #202124);
+
+  /* Google/H5 (XLarge,Large) */
+  font-family: 'Google Sans';
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px; /* 140% */
+}

@@ -1,0 +1,12 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/juyun-juyunlifang/restaurant-guide-service:latest'
+      - '-f'
+      - 'service/Dockerfile'
+      - '.'
+images:
+  - 'gcr.io/juyun-juyunlifang/restaurant-guide-service:latest'
+

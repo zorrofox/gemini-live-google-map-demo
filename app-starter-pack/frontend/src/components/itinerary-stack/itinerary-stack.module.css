@@ -1,0 +1,9 @@
+.itineraryStack {
+  position: absolute;
+  bottom: 128px;
+  left: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+}

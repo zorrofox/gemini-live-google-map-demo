@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=...&loading=async&libraries=maps,maps3d&v=alpha"
+      defer
+    ></script>
+    <script src="look-at.js"></script>
+    <title>Flights experiments</title>
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .map {
+        height: 100vh;
+        width: 100vw;
+        background-color: deeppink;
+      }
+
+      gmp-map-3d {
+        height: 100%;
+        width: 100%;
+      }
+
+      .panel {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(255, 255, 255, 0.5);
+        padding: 1rem;
+        z-index: 10;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="map">
+      <gmp-map-3d
+        center="36.11316914257995,-115.17649679616613,1500"
+        range="30000"
+        heading="61"
+        tilt="69"
+        roll="0"
+        mode="SATELLITE"
+      ></gmp-map-3d>
+
+      <div class="panel">
+        <span class="count">
+          count
+          <input type="number" value="3" />
+        </span>
+        <span class="distance">
+          max distance
+          <input type="number" value="5" />
+        </span>
+        <button class="new-markers">new markers</button>
+        <button class="random">random</button>
+      </div>
+    </div>
+
+    <script>
+      function getRandomLasVegasLocations(numLocations, maxDistance) {
+        // Maximum allowed radius (in km) for our cluster (half the max distance)
+        const halfDistanceKm = maxDistance / 2;
+
+        // Approximate bounding box for Las Vegas
+        const minLat = 36.0,
+          maxLat = 36.3;
+        const minLon = -115.3,
+          maxLon = -115.0;
+
+        // Convert halfDistance from km to degrees latitude (approximation: 1 degree ≈ 111 km)
+        const deltaLat = halfDistanceKm / 111;
+
+        // Choose a random center latitude such that the full circle fits within the bounding box
+        const centerLat =
+          Math.random() * (maxLat - deltaLat - (minLat + deltaLat)) +
+          (minLat + deltaLat);
+
+        // For longitude, the conversion factor depends on latitude.
+        // At the chosen center latitude, 1 degree of longitude is about 111 * cos(latitude in radians) km.
+        const cosLat = Math.cos((centerLat * Math.PI) / 180);
+        const deltaLon = halfDistanceKm / (111 * cosLat);
+
+        // Choose a random center longitude within the safe region
+        const centerLon =
+          Math.random() * (maxLon - deltaLon - (minLon + deltaLon)) +
+          (minLon + deltaLon);
+
+        // Generate random points within a circle of radius halfDistanceKm (in km)
+        const locations = [];
+        for (let i = 0; i < numLocations; i++) {
+          // Uniformly pick an angle (0 to 2π) and a distance (using sqrt for uniform area distribution)
+          let angle = Math.random() * 2 * Math.PI;
+          let distance = halfDistanceKm * Math.sqrt(Math.random()); // distance in km
+
+          // Calculate offsets in km
+          let offsetX = distance * Math.cos(angle); // East-West offset in km
+          let offsetY = distance * Math.sin(angle); // North-South offset in km
+
+          // Convert km offsets to degrees
+          let newLat = centerLat + offsetY / 111;
+          let newLon = centerLon + offsetX / (111 * cosLat);
+
+          locations.push({
+            lat: parseFloat(newLat.toFixed(5)),
+            lng: parseFloat(newLon.toFixed(5)),
+            alt: 610,
+          });
+        }
+        return locations;
+      }
+
+      const map = document.querySelector("gmp-map-3d");
+      const newMarkersButton = document.querySelector(".new-markers");
+      const randomButton = document.querySelector(".random");
+
+      const drawMarkers = (locations) => {
+        map.innerHTML = "";
+
+        const markerAltitudeAboveGround = 200;
+
+        for (const {lat, lng} of locations) {
+          const marker = document.createElement("gmp-marker-3d");
+          marker.setAttribute(
+            "position",
+            `${lat},${lng},${markerAltitudeAboveGround}`
+          );
+          marker.setAttribute("altitude-mode", "RELATIVE_TO_GROUND");
+          marker.setAttribute("label", `Marker`);
+          marker.setAttribute("extruded", "true");
+          map.appendChild(marker);
+        }
+        const randomHeading = Math.random() * 360;
+
+        const {look_at_lat, look_at_lng, altitude, range, tilt, heading} =
+          computeCameraView(
+            [
+              ...locations,
+              ...locations.map((l) => ({
+                ...l,
+                alt: l.alt + markerAltitudeAboveGround,
+              })),
+            ],
+            randomHeading
+          );
+
+        map.flyCameraTo({
+          endCamera: {
+            center: {
+              lat: look_at_lat,
+              lng: look_at_lng,
+              altitude: altitude,
+            },
+            // zooming out a bit to create padding
+            range: range + 800,
+            heading: heading,
+            tilt,
+            roll: 0,
+          },
+          durationMillis: 5000,
+        });
+      };
+
+      newMarkersButton.addEventListener("click", () => {
+        const count = document.querySelector(".count input").value;
+        const distance = document.querySelector(".distance input").value;
+
+        const locations = getRandomLasVegasLocations(count, distance);
+
+        drawMarkers(locations);
+      });
+
+      const drawRandomMarkers = () => {
+        const count = Math.floor(Math.random() * 4) + 2;
+        const distance = Math.random() * 9.8 + 0.2;
+
+        const locations = getRandomLasVegasLocations(count, distance);
+
+        drawMarkers(locations);
+      };
+      randomButton.addEventListener("click", drawRandomMarkers);
+
+      //   setInterval(() => {
+      //     drawRandomMarkers();
+      //   }, 6000);
+
+      //   drawRandomMarkers();
+    </script>
+  </body>
+</html>

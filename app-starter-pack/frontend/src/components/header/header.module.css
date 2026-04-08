@@ -1,0 +1,43 @@
+.header {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 0 40px;
+  background: var(--Google-Type-Grey-900, #202124);
+  color: white;
+  height: var(--header-height);
+
+  .logo {
+    padding: 40px 0;
+    width: 360px;
+  }
+}
+
+.pipe {
+  width: 1px;
+  height: 24px;
+  background: #5f6368;
+}
+
+.locationWeather {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+
+  .region {
+    color: var(--Google-Dark-Grey-600, #80868b);
+  }
+
+  div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.weather {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
