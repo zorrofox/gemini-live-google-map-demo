@@ -175,6 +175,20 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 
 A separate Next.js app (`app-starter-pack/outro/`) for displaying a shareable itinerary page at `/i/[itineraryId]` fetched from Firestore. Deployed independently.
 
+### `debug-tools/` directory
+
+Hand-run debugging utilities at the project root. **Not part of the build or test pipeline.**
+
+| File | Purpose |
+|---|---|
+| `test_websocket.html` | Browser-based WebSocket tester; simulates a glasses client, sends text messages, displays all message types with stats. Has env/voice dropdowns (local ↔ Cloud Run). |
+| `test_audio_only.html` | Browser audio client; captures microphone PCM → streams to `/ws`, plays back AI audio replies. Validates the full audio loop without the React frontend. |
+| `test_genai_proxy.html` | Tests the Go SDK proxy endpoint (`/ws/google.cloud.aiplatform.v1beta1.LlmBidiService/BidiGenerateContent`). Sends a Go-SDK-style setup message and verifies AI replies. |
+| `test_websocket_client.py` | CLI script; simulates a glasses client, pretty-prints all received messages. Supports `--env local\|cloud`, `--url`, `--voice`. |
+| `test_cloud_ws.py` | CLI smoke-test; sends one text query, verifies at least one `serverContent` message is received. Returns exit code 0/1. Supports `--env`, `--url`, `--query`. |
+
+All tools default to `ws://localhost:8000/ws`. Pass `--env cloud` or select "Cloud Run" in the browser dropdown to target the deployed service.
+
 ## Tests
 
 ```bash
