@@ -14,10 +14,10 @@ Supports two client modes:
 
 The default client type is `web` (observer-only). In this mode, clicking **Start** connects to the server but **does not open a Gemini session** — there will be no voice response and the map will not update.
 
-To run the demo interactively in a browser:
+To run the demo interactively in a browser, append `?clientType=glasses` to your Cloud Run URL:
 
 ```
-https://restaurant-guide-service-sg-224077212497.asia-southeast1.run.app/?clientType=glasses
+https://<YOUR_CLOUD_RUN_URL>/?clientType=glasses
 ```
 
 ### What to expect
@@ -33,7 +33,7 @@ https://restaurant-guide-service-sg-224077212497.asia-southeast1.run.app/?client
 Open the URL without `?clientType=glasses` to watch map updates driven by a glasses device:
 
 ```
-https://restaurant-guide-service-sg-224077212497.asia-southeast1.run.app/
+https://<YOUR_CLOUD_RUN_URL>/
 ```
 
 ### Optional URL parameters
@@ -47,7 +47,7 @@ https://restaurant-guide-service-sg-224077212497.asia-southeast1.run.app/
 
 Example with multiple parameters:
 ```
-https://...run.app/?clientType=glasses&voice=Aoede&chatEnabled=true
+https://<YOUR_CLOUD_RUN_URL>/?clientType=glasses&voice=Aoede&chatEnabled=true
 ```
 
 ---

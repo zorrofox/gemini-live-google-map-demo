@@ -18,16 +18,11 @@ import {parseAsBoolean, useQueryState} from 'nuqs';
 
 import {defaultVoice} from '../config/voice-mapping';
 
-// 生产环境后端地址（根据需要切换注释）：
-// 美国中部：restaurant-guide-service-224077212497.us-central1.run.app
-// 新加坡：restaurant-guide-service-sg-224077212497.asia-southeast1.run.app
-// 切换方法：注释掉当前使用的地址，取消注释要使用的地址
-
+// 本地开发连 localhost:8000；生产环境直接用当前页面的域名（Cloud Run 前端和后端同服务）
 const defaultHost =
   window.location.hostname === 'localhost'
-    ? 'localhost:8000' // 本地开发
-    : // : 'restaurant-guide-service-224077212497.us-central1.run.app';  // 美国中部（已注释）
-      'restaurant-guide-service-sg-224077212497.asia-southeast1.run.app'; // ✅ 当前使用：新加坡
+    ? 'localhost:8000'
+    : window.location.host;
 
 const defaultProtocol = window.location.hostname === 'localhost' ? 'ws' : 'wss';
 const userId = `user${Math.floor(Math.random() * 100)}`;
