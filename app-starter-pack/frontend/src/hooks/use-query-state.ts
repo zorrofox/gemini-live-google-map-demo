@@ -25,9 +25,9 @@ import {defaultVoice} from '../config/voice-mapping';
 
 const defaultHost =
   window.location.hostname === 'localhost'
-    ? 'localhost:8080'  // 本地开发
-    // : 'restaurant-guide-service-224077212497.us-central1.run.app';  // 美国中部（已注释）
-    : 'restaurant-guide-service-sg-224077212497.asia-southeast1.run.app';  // ✅ 当前使用：新加坡
+    ? 'localhost:8000' // 本地开发
+    : // : 'restaurant-guide-service-224077212497.us-central1.run.app';  // 美国中部（已注释）
+      'restaurant-guide-service-sg-224077212497.asia-southeast1.run.app'; // ✅ 当前使用：新加坡
 
 const defaultProtocol = window.location.hostname === 'localhost' ? 'ws' : 'wss';
 const userId = `user${Math.floor(Math.random() * 100)}`;

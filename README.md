@@ -8,6 +8,50 @@ Supports two client modes:
 
 ---
 
+## Using the Demo
+
+### ⚠️ You must add `?clientType=glasses` to the URL
+
+The default client type is `web` (observer-only). In this mode, clicking **Start** connects to the server but **does not open a Gemini session** — there will be no voice response and the map will not update.
+
+To run the demo interactively in a browser:
+
+```
+https://restaurant-guide-service-sg-224077212497.asia-southeast1.run.app/?clientType=glasses
+```
+
+### What to expect
+
+1. Open the URL above in Chrome (microphone access required)
+2. Click **Start now** — the button changes to a disconnect state when connected
+3. Allow microphone permission when the browser prompts
+4. Speak naturally — the AI responds with voice and updates the map in real time
+5. Try asking: *"Help me find a good Japanese restaurant near Dubai Mall"*
+
+### Observation mode (no microphone needed)
+
+Open the URL without `?clientType=glasses` to watch map updates driven by a glasses device:
+
+```
+https://restaurant-guide-service-sg-224077212497.asia-southeast1.run.app/
+```
+
+### Optional URL parameters
+
+| Parameter | Default | Options | Effect |
+|---|---|---|---|
+| `clientType` | `web` | `glasses` / `web` | `glasses` = full AI session; `web` = observer only |
+| `voice` | `Charon` | `Aoede` `Charon` `Fenrir` `Puck` `Kore` `Marvin` | AI voice persona |
+| `textOnly` | `false` | `true` | Hides audio controls, enables chat input panel |
+| `chatEnabled` | `false` | `true` | Shows chat panel alongside map |
+
+Example with multiple parameters:
+```
+https://...run.app/?clientType=glasses&voice=Aoede&chatEnabled=true
+```
+
+---
+
 ## Prerequisites
 
 - Python 3.10–3.12
